@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo" xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://code.alibabatech.com/schema/dubbo
+                           http://code.alibabatech.com/schema/dubbo/dubbo.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <dubbo:application name="pinyougou-seckill"></dubbo:application>
+
+    <dubbo:registry protocol="zookeeper" address="192.168.25.133" port="2181"></dubbo:registry>
+
+    <dubbo:protocol name="dubbo" port="20889"></dubbo:protocol>
+
+    <dubbo:annotation package="com.zyy.pinyougou.seckill.service"></dubbo:annotation>
+
+    <dubbo:provider timeout="100000"></dubbo:provider>
+
+    <bean id="freeMarkerConfigurer" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="defaultEncoding" value="utf-8"></property>
+        <property name="templateLoaderPath" value="/WEB-INF/ftl"></property>
+    </bean>
+    
+    <task:annotation-driven executor="taskExecutor"></task:annotation-driven>
+    
+    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="10"></property>
+        <property name="maxPoolSize" value="100"></property>
+        <property name="queueCapacity" value="200"></property>
+        <property name="keepAliveSeconds" value="300"></property>
+        <property name="rejectedExecutionHandler">
+            <bean class="java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy"></bean>
+        </property>
+    </bean>
+
+    <bean id="idWorker" class="com.zyy.pinyougou.common.IdWorker">
+        <constructor-arg name="workerId" value="0"></constructor-arg>
+        <constructor-arg name="datacenterId" value="1"></constructor-arg>
+    </bean>
+
+    <bean id="createOrderThread" class="com.zyy.pinyougou.seckill.thread.CreateOrderThread"></bean>
+
+</beans>

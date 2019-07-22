@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="mqPushConsumer" class="org.apache.rocketmq.client.consumer.DefaultMQPushConsumer" init-method="start" destroy-method="shutdown">
+        <property name="namesrvAddr" value="127.0.0.1:9876"></property>
+        <property name="consumerGroup" value="consumer_page_group"></property>
+        <property name="messageModel" value="BROADCASTING"></property>
+        <property name="subscription">
+            <map>
+                <entry key="Goods_Topic" value="*"></entry>
+            </map>
+        </property>
+        <property name="messageListener" ref="pageMessageListener"></property>
+    </bean>
+
+    <bean id="pageMessageListener" class="com.zyy.pinyougou.page.listener.PageMessageListener"></bean>
+</beans>

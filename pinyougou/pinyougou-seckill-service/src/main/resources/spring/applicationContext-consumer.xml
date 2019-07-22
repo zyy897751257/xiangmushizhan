@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean id="mqPushConsumer" class="org.apache.rocketmq.client.consumer.DefaultMQPushConsumer" init-method="start" destroy-method="shutdown">
+        <property name="namesrvAddr" value="127.0.0.1:9876"></property>
+        <property name="consumerGroup" value="consumer_seckill_group"></property>
+        <property name="messageModel" value="CLUSTERING"></property>
+        <property name="subscription">
+            <map>
+                <entry key="TOPIC_SECKILL" value="Tags_genHTML"></entry>
+            </map>
+        </property>
+        <property name="messageListener" ref="messageListener"></property>
+    </bean>
+
+    <bean id="messageListener" class="com.zyy.pinyougou.seckill.listener.PageMessageListener"></bean>
+
+    <bean id="defaultMQPushConsumer" class="org.apache.rocketmq.client.consumer.DefaultMQPushConsumer" init-method="start" destroy-method="shutdown">
+        <property name="namesrvAddr" value="127.0.0.1:9876"></property>
+        <property name="consumerGroup" value="consumer_seckill_delay_group"></property>
+        <property name="messageModel" value="CLUSTERING"></property>
+        <property name="subscription">
+            <map>
+                <entry key="TOPIC_SECKILL_DELAY" value="Tags_SECKILL_DELAY"></entry>
+            </map>
+        </property>
+        <property name="messageListener" ref="delayMessageListener"></property>
+    </bean>
+
+    <bean id="delayMessageListener" class="com.zyy.pinyougou.seckill.listener.DelayMessageListener"></bean>
+</beans>
