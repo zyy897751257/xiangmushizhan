@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>销售额折线图</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../js/echarts.js"></script>
+</head>
+<body class="hold-transition skin-red sidebar-mini" >
+<!-- .box-body -->
+    <div id="app">
+
+        <div class="box-header with-border">
+            <h1 class="box-title">销售饼状图</h1>
+        </div>
+
+        <div class="box-body">
+
+            <!-- 数据表格 -->
+            <div class="table-box">
+
+                <!--工具栏-->
+                <div class="box-tools">
+                    <div class="has-feedback">
+                        起始日期：<input type="date" v-model="startDate">&nbsp;&nbsp;&nbsp;至&nbsp;&nbsp;&nbsp;<input type="date" v-model="endDate">
+                        <button class="btn btn-default" @click="searchChart()">查询</button>
+                    </div>
+                </div>
+                <!--数据列表/-->
+                <div style="align-content: center">
+                    <div id="main" style="width:1600px;height:700px;"></div>
+                </div>
+
+            </div>
+            <!-- 数据表格 /-->
+    </div>
+</div>
+<!-- /.box-body -->
+
+</body>
+<script src="../plugins/vue/vue.js"></script>
+<script src="../plugins/axios/axios.js"></script>
+<script src="../js/controller/salesChart.js"></script>
+</html>

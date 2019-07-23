@@ -32,8 +32,8 @@ var app = new Vue({
                         },
                         series: [{
                             name: '销售额',
-                            /*data: response.data.saleCounts,*/
-                            data:[160,24,38,400,456,600,1658,32,46,458],
+                            data: response.data.saleCounts,
+                            /*data:[160,24,38,400,456,600,1658,32,46,458],*/
                             type: 'line'
                         }]
                     });

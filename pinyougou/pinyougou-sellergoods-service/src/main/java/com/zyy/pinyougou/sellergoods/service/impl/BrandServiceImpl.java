@@ -35,10 +35,6 @@ public class BrandServiceImpl extends CoreServiceImpl<TbBrand>  implements Brand
 		this.brandMapper=brandMapper;
 	}
 
-	
-	
-
-	
 	@Override
     public PageInfo<TbBrand> findPage(Integer pageNo, Integer pageSize) {
         PageHelper.startPage(pageNo,pageSize);
@@ -51,10 +47,7 @@ public class BrandServiceImpl extends CoreServiceImpl<TbBrand>  implements Brand
         return pageInfo;
     }
 
-	
-	
-
-	 @Override
+    @Override
     public PageInfo<TbBrand> findPage(Integer pageNo, Integer pageSize, TbBrand brand) {
         PageHelper.startPage(pageNo,pageSize);
 
@@ -80,5 +73,13 @@ public class BrandServiceImpl extends CoreServiceImpl<TbBrand>  implements Brand
 
         return pageInfo;
     }
-	
+
+    @Override
+    public void add(List<TbBrand> brandList) {
+        for (TbBrand tbBrand : brandList) {
+            if (tbBrand != null) {
+                brandMapper.insert(tbBrand);
+            }
+        }
+    }
 }

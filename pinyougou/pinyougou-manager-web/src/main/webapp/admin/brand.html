@@ -6,9 +6,11 @@
     <title>品牌管理</title>
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
     <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../plugins/elementui/index.css">
     <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
     <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
     <link rel="stylesheet" href="../css/style.css">
+	<script src="../plugins/elementui/index.js"></script>
 	<script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
     <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
 	<script src="../plugins/angularjs/angular.js"></script>
@@ -19,63 +21,81 @@
   <!-- .box-body -->
   <div id="app">
 
-	  <div class="box-header with-border">
+	  <div class="box-header with-border content-header">
 		  <h3 class="box-title">品牌管理</h3>
 	  </div>
 
-	  <div class="box-body">
+	  <div class="app-container">
+		  <div class="box">
+			  <div class="box ordersetting">
 
-		  <!-- 数据表格 -->
-		  <div class="table-box">
+				  <el-card class="box-card">
+				  <div class="boxMain">
+					  <el-button style="margin-bottom: 20px;margin-right: 20px" type="primary" @click="downloadTemplate()">模板下载</el-button>
+					  <el-upload action="/brand/upload.shtml"
+								 name="excelFile"
+								 :show-file-list="false"
+								 :on-success="handleSuccess"
+								 :before-upload="beforeUpload">
+						  <el-button type="primary">上传文件</el-button>
+					  </el-upload>
+				  </div>
+				  <div>
+					  操作说明：请点击"模板下载"按钮获取模板文件，在模板文件中录入预约设置数据后点击"上传文件"按钮上传模板文件。
+				  </div>
+			  </el-card>
+			  <!-- 数据表格 -->
+			  <div class="table-box">
 
-			  <!--工具栏-->
-			  <div class="pull-left">
-				  <div class="form-group form-inline">
-					  <div class="btn-group">
-						  <button type="button" class="btn btn-default" title="新建" data-toggle="modal" data-target="#editModal" @click="entity={}"><i class="fa fa-file-o"></i> 新建</button>
-						  <button type="button" class="btn btn-default" title="删除" @click="dele()"><i class="fa fa-trash-o"></i> 删除</button>
-						  <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i class="fa fa-refresh"></i> 刷新</button>
+				  <!--工具栏-->
+				  <div class="pull-left">
+					  <div class="form-group form-inline">
+						  <div class="btn-group">
+							  <button type="button" class="btn btn-default" title="新建" data-toggle="modal" data-target="#editModal" @click="entity={}"><i class="fa fa-file-o"></i> 新建</button>
+							  <button type="button" class="btn btn-default" title="删除" @click="dele()"><i class="fa fa-trash-o"></i> 删除</button>
+							  <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i class="fa fa-refresh"></i> 刷新</button>
+						  </div>
 					  </div>
 				  </div>
-			  </div>
-			  <div class="box-tools pull-right">
-				  <div class="has-feedback">
-					  <!--工具栏/-->
-				  		品牌名称：<input type="text" v-model="searchEntity.name">
-				  		首字母：<input type="text"   v-model="searchEntity.firstChar">
-					  <button class="btn btn-default" @click="searchList(1)">搜索</button>
+				  <div class="box-tools pull-right">
+					  <div class="has-feedback">
+						  <!--工具栏/-->
+					  		品牌名称：<input type="text" v-model="searchEntity.name">
+					  		首字母：<input type="text"   v-model="searchEntity.firstChar">
+						  <button class="btn btn-default" @click="searchList(1)">搜索</button>
+					  </div>
 				  </div>
-			  </div>
-			  <!--数据列表-->
-			  <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
-				  <thead>
-				  <tr>
-					  <th class="" style="padding-right:0px">
-						  <input id="selall" type="checkbox" class="icheckbox_square-blue">
-					  </th>
-					  <th class="sorting_asc">品牌ID</th>
-					  <th class="sorting">品牌名称</th>
-					  <th class="sorting">品牌首字母</th>
-					  <th class="text-center">操作</th>
-				  </tr>
-				  </thead>
-				  <tbody>
-				  <tr v-for="entity in list">
-					  <td><input  type="checkbox" :value="entity.id" v-model="ids"></td>
-					  <td>{{entity.id}}</td>
-					  <td>{{entity.name}}</td>
-					  <td>{{entity.firstChar}}</td>
-					  <td class="text-center">
-						  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#editModal" @click="findOne(entity.id)" >修改</button>
-					  </td>
-				  </tr>
 
-				  </tbody>
-			  </table>
-			  <!--数据列表/-->
-			  <div class="text-center">
-				  <navigation :pages="pages" :current.sync="pageNo"  @navpage="searchList"></navigation>
-			  </div>
+				  <!--数据列表-->
+				  <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
+					  <thead>
+					  <tr>
+						  <th class="" style="padding-right:0px">
+							  <input id="selall" type="checkbox" class="icheckbox_square-blue">
+						  </th>
+						  <th class="sorting_asc">品牌ID</th>
+						  <th class="sorting">品牌名称</th>
+						  <th class="sorting">品牌首字母</th>
+						  <th class="text-center">操作</th>
+					  </tr>
+					  </thead>
+					  <tbody>
+					  <tr v-for="entity in list">
+						  <td><input  type="checkbox" :value="entity.id" v-model="ids"></td>
+						  <td>{{entity.id}}</td>
+						  <td>{{entity.name}}</td>
+						  <td>{{entity.firstChar}}</td>
+						  <td class="text-center">
+							  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#editModal" @click="findOne(entity.id)" >修改</button>
+						  </td>
+					  </tr>
+
+					  </tbody>
+				  </table>
+				  <!--数据列表/-->
+				  <div class="text-center">
+					  <navigation :pages="pages" :current.sync="pageNo"  @navpage="searchList"></navigation>
+				  </div>
 
 		  </div>
 		  <!-- 数据表格 /-->
@@ -83,6 +103,8 @@
 
 
 
+	  </div>
+		  </div>
 	  </div>
 	  <!-- /.box-body -->
 
@@ -118,6 +140,7 @@
 </body>
 <script src="../plugins/vue/vue.js"></script>
 <script src="../plugins/axios/axios.js"></script>
+<script src="../plugins/elementui/index.js"></script>
 <script src="../js/pagination.js"></script>
 <script src="../js/controller/brandController.js"></script>
 </html>
