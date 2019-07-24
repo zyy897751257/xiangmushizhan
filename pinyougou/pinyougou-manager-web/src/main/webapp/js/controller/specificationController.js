@@ -9,9 +9,52 @@
             optionList:[]
         },
         ids:[],
-        searchEntity:{}
+        searchEntity:{},
+        dialogFormVisible: false,
+        formLabelWidth: '120px',
+        multipleSelection: []
     },
     methods: {
+        handleSelectionChange(val) {
+            this.multipleSelection = val;
+            this.ids = []
+            if (this.multipleSelection != null) {
+                for (var i = 0;i<this.multipleSelection.length;i++) {
+                    this.ids.push(this.multipleSelection[i].id)
+                }
+            }
+            console.log(this.ids)
+        },
+        //上传之前进行文件格式校验
+        beforeUpload(file){
+            const isXLS = file.type === 'application/vnd.ms-excel';
+            if(isXLS){
+                return true;
+            }
+            const isXLSX = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+            if (isXLSX) {
+                return true;
+            }
+            this.$message.error('上传文件只能是xls或者xlsx格式!');
+            return false;
+        },
+        //下载模板文件（路径）
+        downloadTemplate(){
+            window.location.href="../template/template.xlsx";
+        },
+        //上传成功提示
+        handleSuccess(response, file) {
+            if(response.success){
+                this.$message({
+                    message: response.message,
+                    type: 'success'
+                });
+                window.location.reload();
+            }else{
+                this.$message.error(response.message);
+            }
+            console.log(response, file);
+        },
         searchList:function (curPage) {
             axios.post('/specification/search.shtml?pageNo='+curPage,this.searchEntity).then(function (response) {
                 //获取数据

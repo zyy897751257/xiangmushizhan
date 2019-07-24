@@ -1,142 +1,181 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <!-- 页面meta -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>规格管理</title>
+        <meta name="description" content="规格管理">
+        <meta name="keywords" content="规格管理">
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+        <!-- 引入样式 -->
+        <!--<link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">-->
+        <link rel="stylesheet" href="../plugins/elementui/index.css">
+        <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+        <link rel="stylesheet" href="../css/orderset.css">
+        <!--<link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+        <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">-->
+        <!-- 引入组件库 -->
+        <script src="../plugins/vue/vue.js"></script>
+        <script src="../plugins/elementui/index.js"></script>
+        <script type="text/javascript" src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+        <script src="../plugins/axios/axios.js"></script>
+    </head>
+    <body class="hold-transition">
+    <div id="app">
+        <div class="content-header">
+            <h3 class="box-title">规格管理</h3>
+        </div>
+        <div class="app-container">
+            <div class="box">
+                <div class="box ordersetting"style="width: auto">
+                    <el-card class="box-card">
+                        <div class="boxMain">
+                            <el-button style="margin-bottom: 20px;margin-right: 20px" type="primary" @click="downloadTemplate()">模板下载<i class="el-icon-download el-icon--right"></i></el-button>
+                            <el-upload action="/specification/upload.shtml"
+                                       name="excelFile"
+                                       :show-file-list="false"
+                                       :on-success="handleSuccess"
+                                       :before-upload="beforeUpload">
+                                <el-button type="primary">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                            </el-upload>
+                        </div>
+                        <div>
+                            操作说明：请点击"模板下载"按钮获取模板文件，在模板文件中录入数据后点击"上传文件"按钮上传模板文件。
+                        </div>
+                        <br>
+                        <hr coler="black">
+                        <div class="table-box">
+                                <!--工具栏-->
+                                <div class="pull-left">
+                                    <div class="form-group form-inline">
+                                        <div class="btn-group">
+                                            <el-row>
+                                                <el-button type="primary" icon="el-icon-plus" circle @click="entity={};dialogFormVisible = true"></el-button>
+                                                <el-button type="danger" icon="el-icon-delete" circle @click="dele()"></el-button>
+                                                <el-button type="info" icon="el-icon-refresh" circle onclick="window.location.reload();"></el-button>
+                                            </el-row>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box-tools pull-right">
+                                    <div>
+                                        <el-form :inline="true" class="demo-form-inline">
+                                            <el-form-item label="规格名称：">
+                                                <el-input v-model="searchEntity.specName" placeholder="规格名称"></el-input>
+                                            </el-form-item>
+                                            <el-form-item>
+                                                <el-button type="primary" @click="searchList(1)">查询</el-button>
+                                            </el-form-item>
+                                        </el-form>
+                                    </div>
+                                </div>
+                            <!--数据列表/-->
+                        </div>
+                    </el-card>
+                    <template style="width: auto">
+                        <el-table
+                                ref="multipleTable"
+                                :data="list"
+                                border
+                                stripe
+                                tooltip-effect="dark"
+                                style="width: 100%"
+                                @selection-change="handleSelectionChange">
+                            <el-table-column
+                                    type="selection"
+                                    width="140"
+                                    align="center">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="id"
+                                    label="规格ID"
+                                    width="150"
+                                    align="center">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="specName"
+                                    label="规格名称"
+                                    width="600"
+                                    align="center">
+                            </el-table-column>
+                            <!--<el-table-column
+                                    prop="firstChar"
+                                    label="品牌首字母"
+                                    width="450"
+                                    align="center">
+                            </el-table-column>-->
+                            <el-table-column label="操作"
+                                             align="center">
+                                <template slot-scope="scope">
+                                    <el-button size="mini" type="primary" @click="findOne(scope.row.id);dialogFormVisible = true">编辑</el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                        <el-dialog title="规格编辑" :visible.sync="dialogFormVisible">
+                            <el-form :model="entity">
+                                <el-form-item label="规格名称" :label-width="formLabelWidth">
+                                    <el-input placeholder="规格名称" v-model="entity.tbSpecification.specName" autocomplete="off"></el-input>
+                                </el-form-item>
+                            </el-form>
+                            <!-- 规格选项 -->
+                            <div class="btn-group">
+                                <el-button type="primary" plain title="新建" @click="addTableRow()" ><i class="fa fa-file-o"></i> 新增规格选项</el-button>
+                            </div>
 
-<head>
-    <!-- 页面meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>规格管理</title>
-    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
-    <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
-    <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
-    <link rel="stylesheet" href="../css/style.css">
-	<script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
-    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
-    
-</head>
+                            <table class="table table-bordered table-striped table-hover dataTable">
+                                <thead>
+                                <tr>
+                                    <th class="sorting">规格选项</th>
+                                    <th class="sorting">排序</th>
+                                    <th class="sorting">操作</th>
+                                </thead>
+                                <tbody>
+                                <tr v-for="(option,index) in entity.optionList">
+                                    <td>
+                                        <input class="form-control" v-model="option.optionName" placeholder="规格选项">
+                                    </td>
+                                    <td>
+                                        <input class="form-control" v-model="option.orders" placeholder="排序">
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-default" title="删除" @click="removeTableRow(index)"><i class="fa fa-trash-o"></i> 删除</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div slot="footer" class="dialog-footer">
+                                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                                <el-button type="primary" @click="save();dialogFormVisible=false">保 存</el-button>
+                            </div>
+                        </el-dialog>
+                    </template><br>
+                    <hr>
+                    <div style="text-align: center">
+                        <template>
+                            <!--<navigation :pages="pages" :current.sync="pageNo"  @navpage="searchList"></navigation>-->
+                            <el-pagination
+                                    background
+                                    layout="prev, pager, next"
+                                    :current-page.sync="pageNo"
+                                    @current-change="searchList"
+                                    :page-count="pages">
+                            </el-pagination>
+                        </template>
+                    </div>
+                </div>
+            </div>
 
-<body class="hold-transition skin-red sidebar-mini" >
-  <!-- .box-body -->
-  		<div id="app">
+        </div>
+        <!-- 数据表格 -->
 
-			<div class="box-header with-border">
-				<h3 class="box-title">规格管理</h3>
-			</div>
-			<div class="box-body">
-				<!-- 数据表格 -->
-				<div class="table-box">
-
-					<!--工具栏-->
-					<div class="pull-left">
-						<div class="form-group form-inline">
-							<div class="btn-group">
-								<button type="button" class="btn btn-default" title="新建" data-toggle="modal" data-target="#editModal" @click="entity={tbSpecification:{},optionList:[]}"><i class="fa fa-file-o"></i> 新建</button>
-								<button type="button" class="btn btn-default" title="删除" @click="dele()"><i class="fa fa-trash-o"></i> 删除</button>
-
-								<button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i class="fa fa-refresh"></i> 刷新</button>
-							</div>
-						</div>
-					</div>
-					<div class="box-tools pull-right">
-						<div class="has-feedback">
-							规格名称：<input v-model="searchEntity.specName" >
-							<button class="btn btn-default" @click="searchList(pageNo)">查询</button>
-						</div>
-					</div>
-					<!--工具栏/-->
-					<!--数据列表-->
-					<table id="dataList" class="table table-bordered table-striped table-hover dataTable">
-						<thead>
-						<tr>
-							<th class="" style="padding-right:0px">
-								<input id="selall" type="checkbox" class="icheckbox_square-blue">
-							</th>
-							<th class="sorting_asc">规格ID</th>
-							<th class="sorting">规格名称</th>
-							<th class="text-center">操作</th>
-						</tr>
-						</thead>
-						<tbody>
-						<tr v-for="entity in list">
-							<td><input  type="checkbox" :value="entity.id" v-model="ids"></td>
-							<td>{{entity.id}}</td>
-							<td>{{entity.specName}}</td>
-							<td class="text-center">
-								<button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#editModal" @click="findOne(entity.id)">修改</button>
-							</td>
-						</tr>
-						</tbody>
-					</table>
-					<!--数据列表/-->
-				</div>
-				<!-- 数据表格 /-->
-			</div>
-			<!-- /.box-body -->
-			<div class="text-center">
-				<navigation :pages="pages"  @navpage="searchList"></navigation>
-			</div>
-
-			<!-- 编辑窗口 -->
-			<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-				<div class="modal-dialog" >
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-							<h3 id="myModalLabel">规格编辑</h3>
-						</div>
-						<div class="modal-body">
-
-							<table class="table table-bordered table-striped"  width="800px">
-								<tr>
-									<td>规格名称</td>
-									<td><input  class="form-control" placeholder="规格名称" v-model="entity.tbSpecification.specName">  </td>
-								</tr>
-							</table>
-
-							<!-- 规格选项 -->
-							<div class="btn-group">
-								<button type="button" class="btn btn-default" title="新建" @click="addTableRow()" ><i class="fa fa-file-o"></i> 新增规格选项</button>
-
-							</div>
-
-							<table class="table table-bordered table-striped table-hover dataTable">
-								<thead>
-								<tr>
-									<th class="sorting">规格选项</th>
-									<th class="sorting">排序</th>
-									<th class="sorting">操作</th>
-								</thead>
-								<tbody>
-								<tr v-for="(option,index) in entity.optionList">
-									<td>
-										<input class="form-control" v-model="option.optionName" placeholder="规格选项">
-									</td>
-									<td>
-										<input class="form-control" v-model="option.orders" placeholder="排序">
-									</td>
-									<td>
-										<button type="button" class="btn btn-default" title="删除" @click="removeTableRow(index)"><i class="fa fa-trash-o"></i> 删除</button>
-									</td>
-								</tr>
-								</tbody>
-							</table>
-
-
-						</div>
-						<div class="modal-footer">
-							<button class="btn btn-success" data-dismiss="modal" aria-hidden="true" @click="save">保存</button>
-							<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-</body>
-<script src="../plugins/vue/vue.js"></script>
-<script src="../plugins/axios/axios.js"></script>
-<script src="../js/pagination.js"></script>
-<script src="../js/controller/specificationController.js"></script>
-
+    </div>
+    </body>
+    <!-- 引入组件库 -->
+    <script src="../plugins/vue/vue.js"></script>
+    <script src="../plugins/axios/axios.js"></script>
+    <script src="../plugins/elementui/index.js"></script>
+    <script src="../js/pagination.js"></script>
+    <script src="../js/controller/specificationController.js"></script>
 </html>

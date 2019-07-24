@@ -6,9 +6,22 @@
         list:[],
         entity:{},
         ids:[],
-        searchEntity:{}
+        searchEntity:{},
+        dialogFormVisible: false,
+        formLabelWidth: '120px',
+        multipleSelection: []
     },
     methods: {
+        handleSelectionChange(val) {
+            this.multipleSelection = val;
+            this.ids = []
+            if (this.multipleSelection != null) {
+                for (var i = 0;i<this.multipleSelection.length;i++) {
+                    this.ids.push(this.multipleSelection[i].id)
+                }
+            }
+            console.log(this.ids)
+        },
         //上传之前进行文件格式校验
         beforeUpload(file){
             const isXLS = file.type === 'application/vnd.ms-excel';
@@ -24,7 +37,7 @@
         },
         //下载模板文件（路径）
         downloadTemplate(){
-            window.location.href="../../template/ordersetting_template.xlsx";
+            window.location.href="../template/template.xlsx";
         },
         //上传成功提示
         handleSuccess(response, file) {
@@ -108,6 +121,7 @@
         findOne:function (id) {
             axios.get('/brand/findOne/'+id+'.shtml').then(function (response) {
                 app.entity=response.data;
+                console.log(app.entity)
             }).catch(function (error) {
                 console.log("1231312131321");
             });
