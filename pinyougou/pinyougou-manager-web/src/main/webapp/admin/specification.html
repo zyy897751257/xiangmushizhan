@@ -52,7 +52,7 @@
                                     <div class="form-group form-inline">
                                         <div class="btn-group">
                                             <el-row>
-                                                <el-button type="primary" icon="el-icon-plus" circle @click="entity={};dialogFormVisible = true"></el-button>
+                                                <el-button type="primary" icon="el-icon-plus" circle @click="dialogFormVisible = true;entity={tbSpecification:{},optionList:[]}"></el-button>
                                                 <el-button type="danger" icon="el-icon-delete" circle @click="dele()"></el-button>
                                                 <el-button type="info" icon="el-icon-refresh" circle onclick="window.location.reload();"></el-button>
                                             </el-row>
@@ -100,12 +100,6 @@
                                     width="600"
                                     align="center">
                             </el-table-column>
-                            <!--<el-table-column
-                                    prop="firstChar"
-                                    label="品牌首字母"
-                                    width="450"
-                                    align="center">
-                            </el-table-column>-->
                             <el-table-column label="操作"
                                              align="center">
                                 <template slot-scope="scope">
@@ -113,38 +107,46 @@
                                 </template>
                             </el-table-column>
                         </el-table>
-                        <el-dialog title="规格编辑" :visible.sync="dialogFormVisible">
+                        <el-dialog title="规格编辑" :visible.sync="dialogFormVisible" style="width: 980px">
                             <el-form :model="entity">
                                 <el-form-item label="规格名称" :label-width="formLabelWidth">
-                                    <el-input placeholder="规格名称" v-model="entity.tbSpecification.specName" autocomplete="off"></el-input>
+                                    <el-input placeholder="规格名称" v-model="entity.tbSpecification.specName" style="width: auto"></el-input>
                                 </el-form-item>
                             </el-form>
                             <!-- 规格选项 -->
                             <div class="btn-group">
-                                <el-button type="primary" plain title="新建" @click="addTableRow()" ><i class="fa fa-file-o"></i> 新增规格选项</el-button>
-                            </div>
-
-                            <table class="table table-bordered table-striped table-hover dataTable">
-                                <thead>
-                                <tr>
-                                    <th class="sorting">规格选项</th>
-                                    <th class="sorting">排序</th>
-                                    <th class="sorting">操作</th>
-                                </thead>
-                                <tbody>
-                                <tr v-for="(option,index) in entity.optionList">
-                                    <td>
-                                        <input class="form-control" v-model="option.optionName" placeholder="规格选项">
-                                    </td>
-                                    <td>
-                                        <input class="form-control" v-model="option.orders" placeholder="排序">
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-default" title="删除" @click="removeTableRow(index)"><i class="fa fa-trash-o"></i> 删除</button>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
+                                <el-button type="primary" plain title="新建" @click="addTableRow()"><i class="fa fa-file-o"></i> 新增规格选项</el-button>
+                            </div><br>
+                            <el-table ref="multipleTable"
+                                      :data="entity.optionList"
+                                      border
+                                      tooltip-effect="dark"
+                                      style="width: 100%">
+                                <el-table-column
+                                        label="规格选项"
+                                        width="156"
+                                        align="center">
+                                    <template slot-scope="scope">
+                                        <el-input v-model="scope.row.optionName" placeholder="规格选项" style="width: auto"></el-input>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                        label="排序"
+                                        width="153"
+                                        align="center">
+                                    <template slot-scope="scope">
+                                        <el-input v-model="scope.row.orders" placeholder="规格选项" style="width: auto"></el-input>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                        label="操作"
+                                        width="140"
+                                        align="center">
+                                    <template slot-scope="scope">
+                                        <el-button type="danger" @click="removeTableRow(scope.$index)">删除</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
                             <div slot="footer" class="dialog-footer">
                                 <el-button @click="dialogFormVisible = false">取 消</el-button>
                                 <el-button type="primary" @click="save();dialogFormVisible=false">保 存</el-button>
